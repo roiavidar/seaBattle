@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { IRoomMetaData } from '../components/seaBattle/GameSetup/GameSetup.model';
+import { IRoomMetaData } from '../components/SeaBattle/GameSetup/GameSetup.model';
 import { firebase } from '../libraries/firebase';
 
 export function useRoomsData() {

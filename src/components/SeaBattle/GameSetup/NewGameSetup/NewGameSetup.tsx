@@ -33,7 +33,7 @@ export default function NewGameSetup(props: {
         }
 
         const gameConfig: IGameConfig = {
-            id: docRef.id || 'private game',
+            id: (docRef && docRef.id) || 'private game',
             vsPlayer,
             roomName
         }

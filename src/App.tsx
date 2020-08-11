@@ -7,7 +7,7 @@ import _ from "lodash";
 
 import './App.css';
 import b from './components/submarines';
-import SeaBattleGame from './components/seaBattle/seaBattle';
+import SeaBattleGame from './components/SeaBattle/SeaBattle';
 
 const Square = observer(function Square({ item, children }: { item?: BoardSquare, children: JSX.Element }) {
     if (!item) {
