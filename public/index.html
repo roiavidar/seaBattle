@@ -39,5 +39,26 @@
       To begin the development, run `npm start` or `yarn start`.
       To create a production bundle, use `npm run build` or `yarn build`.
     -->
+    <!-- The core Firebase JS SDK is always required and must be listed first -->
+  <script src="https://www.gstatic.com/firebasejs/7.17.2/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/7.17.2/firebase-firestore.js"></script>
+
+  <!-- TODO: Add SDKs for Firebase products that you want to use
+      https://firebase.google.com/docs/web/setup#available-libraries -->
+
+  <script>
+    // Your web app's Firebase configuration
+    var firebaseConfig = {
+      apiKey: "AIzaSyAKIP1RN9PwJeGEZ_a4HfUl1fysPk_JNRQ",
+      authDomain: "sea-battle-51cda.firebaseapp.com",
+      databaseURL: "https://sea-battle-51cda.firebaseio.com",
+      projectId: "sea-battle-51cda",
+      storageBucket: "sea-battle-51cda.appspot.com",
+      messagingSenderId: "833141612429",
+      appId: "1:833141612429:web:bb26014f510925cadba7c4"
+    };
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+  </script>
   </body>
 </html>
