@@ -1,6 +1,8 @@
 import React from 'react';
 import { IGameConfig } from '../GameSetup/GameSetup.model';
 import { firebase } from '../../../libraries/firebase';
+import PlayerVsPlayer from './PlayerVsPlayer/PlayerVsPlayer';
+import PlayerVsAI from './PlayerVsAI/PlayerVsAI';
 
 export default function Game(props: {
     onBackHandler: () => void,
@@ -20,13 +22,13 @@ export default function Game(props: {
 
     return (
         <div>
-            Game
-            <div>
-               room name:  {gameSetup.roomName}
-            </div>
-            <div>
-                vs player: {gameSetup.vsPlayer ? 'true' : 'false'}
-            </div>
+            {
+                gameSetup.vsPlayer
+                ?
+                <PlayerVsPlayer gameSetup={gameSetup} />
+                :
+                <PlayerVsAI />
+            }
             <button onClick={handleCloseGame}>Back</button>
         </div>
     )

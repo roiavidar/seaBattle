@@ -1,4 +1,4 @@
-import {action, computed, observable} from "mobx";
+import { observable } from "mobx";
 import { computedFn } from "mobx-utils";
 import _ from "lodash";
 
@@ -33,7 +33,7 @@ export class Board {
     @observable data: Map<string, BoardSquare> = new Map();
     rowCount: number;
     columnCount: number;
-    submarines: any = [];
+    @observable submarines: any = [];
 
     constructor(rowCount: number, columnCount: number) {
         this.rowCount = rowCount;
@@ -62,9 +62,9 @@ export class Board {
 
     bomb(pos: Point) {
         const square = this.cellAt(pos);
-        if (square == null) return;
-
+        if (square == null || square.revealed) return;
         square.bomb();
+        return square.item.repr();
     }
 
     isSubmarineStarts(row: number, col: number) {
@@ -92,7 +92,7 @@ export class Board {
     }
 }
 
-export class Sea {
+class Sea {
     hit(id: number) {}
 
     repr() {
@@ -100,7 +100,7 @@ export class Sea {
     }
 }
 
-abstract class Submarine extends Sea {
+export abstract class Submarine extends Sea {
     size: number;
     @observable bombed: Set<number> = new Set();
     @observable sank: boolean = false;
@@ -140,9 +140,3 @@ export class HorizontalSubmarine extends Submarine {
         return _.range(this.size).map((i): Point => ([row, column + i]));
     }
 }
-
-const b = new Board(10, 10);
-// b.addSubmarine(new HorizontalSubmarine(5), 0, 0);
-// b.addSubmarine(new VerticalSubmarine(3), 2, 5);
-// b.addSubmarine(new HorizontalSubmarine(2), 6, 0);
-export default b;

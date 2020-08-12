@@ -21,7 +21,8 @@ export default function JoinGameSetup(props: {
         done({
             id: roomData.id,
             vsPlayer: true,
-            roomName: roomData.name
+            roomName: roomData.name,
+            isPlayingFirst: false
         });
     }
 

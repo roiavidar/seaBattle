@@ -1,7 +1,8 @@
 export interface IGameConfig {
     id: string,
     vsPlayer: boolean,
-    roomName: string
+    roomName: string,
+    isPlayingFirst: boolean
 }
 
 export interface IRoomMetaData {
