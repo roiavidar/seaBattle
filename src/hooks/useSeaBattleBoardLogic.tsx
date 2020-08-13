@@ -1,6 +1,5 @@
 import { useRef, useState } from 'react';
 import { Board, Submarine, HorizontalSubmarine } from '../models/seaBattleBoard';
-import { ISeaBattleBoard } from '../components/SeaBattle/Game/SeaBattleBoard/ISeaBattleBoard';
 
 export function useSeaBattleBoardLogic(props: {
     isPlayingFirst: boolean
@@ -9,13 +8,8 @@ export function useSeaBattleBoardLogic(props: {
     const myBoard = useRef(new Board(10, 10)).current;
     const enemyBoard = useRef(new Board(10, 10)).current;
     const board = {
-        myBoard: {
-            board: myBoard.data,
-            submarines: myBoard.submarines
-        }, 
-        enemyBoard: {
-            board: enemyBoard.data,
-        }
+        myBoard: myBoard, 
+        enemyBoard: enemyBoard
     }
     const [submarinesCounter, setSubmarinesCounter] = useState(0);
     const maxSubmarines = 6;
@@ -71,8 +65,8 @@ export function useSeaBattleBoardLogic(props: {
 
 export type ISeaBattleBoardLogic = [
     {
-        myBoard: ISeaBattleBoard, 
-        enemyBoard: ISeaBattleBoard
+        myBoard: Board, 
+        enemyBoard: Board
     },
     (submarine: Submarine, row: number, column: number) => boolean,
     (x: number, y: number) => boolean | string | undefined,

@@ -2,6 +2,8 @@ import React from 'react';
 import { IGameConfig } from '../../GameSetup/GameSetup.model';
 import SeaBattleBoard from '../SeaBattleBoard/SeaBattleBoard';
 import { useSeaBattleBoardLogic, ISeaBattleBoardLogic } from '../../../../hooks/useSeaBattleBoardLogic';
+import { submarines } from '../SubmarinesGameTools';
+import { ItemsType } from '../SeaBattleBoard/BoardItemsType';
 
 export default function PlayerVsPlayer(props: {
     gameSetup: IGameConfig
@@ -20,10 +22,12 @@ export default function PlayerVsPlayer(props: {
             <div>{myTurn ? 'Bomb a square !' : 'Wait for other player turn'}</div>
             <div>
                 <div>My Board:</div>
-                <SeaBattleBoard 
+                <SeaBattleBoard
+                    submarines={submarines} 
                     board={board.myBoard}
                     placeSubmarine={placeSubmarine}
-                    play={safePlay} />
+                    play={safePlay}
+                    itemsType={ItemsType.SUBMARINE} />
             </div>
             <div>
                 <div>Enemy Board:</div>
