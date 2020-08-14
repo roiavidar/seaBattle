@@ -2,28 +2,27 @@ import { useDrag } from "react-dnd";
 import React from "react";
 
 export default function Submarine(props: {
-    height: number,
-    width: number,
-    src: string,
     vertical: boolean,
     size: number,
     itemsType?: string
 }) {
-    const {width, height, src, vertical, size, itemsType = ''} = props;
+    const {vertical, size, itemsType = ''} = props;
     const [{ isDragging }, drag] = useDrag({
-        item: { type: itemsType, vertical, size, width, height, src },
+        item: { type: itemsType, vertical, size },
         collect: (monitor) => ({
           isDragging: !!monitor.isDragging()
         })
-      })
+      });
+
+      const imageUrl = `media/${size}-square-submarine.jpg`;
     
       return (
           <img 
                 alt=''
                 ref={drag}
-                height={height}
-                width={width} 
-                src={src}
+                src={imageUrl}
+                width={size*40}
+                height={40}
                 style={{
                     opacity: isDragging ? 0.5 : 1,
                     fontSize: 25,

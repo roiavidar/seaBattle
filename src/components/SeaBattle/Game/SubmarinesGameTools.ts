@@ -3,27 +3,35 @@ export const horizontalSubmarine = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUg
 export const verticalSubmarine = 'https://st4.depositphotos.com/3369547/30981/v/1600/depositphotos_309817396-stock-illustration-bat-upside-down-on-white.jpg'
 export const submarines = [
     {
-        width: 25,
-        height: 100,
-        vertical: true,
+        vertical: false,
         size: 4
     },
     {
-        width: 25,
-        height: 75,
-        vertical: true,
+        vertical: false,
         size: 3
     },
     {
-        width: 50,
-        height: 25,
         vertical: false,
         size: 2
     },
     {
-        width: 100,
-        height: 25,
         vertical: false,
-        size: 4
+        size: 2
+    },
+    {
+        vertical: false,
+        size: 1
+    },
+    {
+        vertical: false,
+        size: 1
+    },
+    {
+        vertical: false,
+        size: 1
+    },
+    {
+        vertical: false,
+        size: 1
     }
 ]

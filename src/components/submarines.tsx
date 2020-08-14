@@ -33,7 +33,7 @@ export class Board {
     @observable data: Map<string, BoardSquare> = new Map();
     rowCount: number;
     columnCount: number;
-    submarines: any = [];
+    submarines: Map<string, Submarine> = new Map();
 
     constructor(rowCount: number, columnCount: number) {
         this.rowCount = rowCount;
@@ -57,7 +57,7 @@ export class Board {
             square.item  = submarine;
             square.id    = i;
         }
-        this.submarines[`${row}-${column}`] = submarine;
+        this.submarines.set(`${row}-${column}`, submarine);
     }
 
     bomb(pos: Point) {
@@ -68,7 +68,7 @@ export class Board {
     }
 
     isSubmarineStarts(row: number, col: number) {
-        return this.submarines[`${row}-${col}`];
+        return this.submarines.get(`${row}-${col}`);
     }
 
     cellAt(pos: Point) {
@@ -100,7 +100,7 @@ export class Sea {
     }
 }
 
-abstract class Submarine extends Sea {
+export abstract class Submarine extends Sea {
     size: number;
     @observable bombed: Set<number> = new Set();
     @observable sank: boolean = false;
