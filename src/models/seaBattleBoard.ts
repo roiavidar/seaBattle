@@ -33,7 +33,7 @@ export class Board {
     @observable data: Map<string, BoardSquare> = new Map();
     rowCount: number;
     columnCount: number;
-    @observable submarines: any = [];
+    @observable submarines: Map<string, Submarine> = new Map();
 
     constructor(rowCount: number, columnCount: number) {
         this.rowCount = rowCount;
@@ -51,13 +51,14 @@ export class Board {
         for (let i=0; i < coords.length; i++) {
             const square = this.cellAt(coords[i]);
             if (square == null) {
-                throw new Error(`Invalid Coordinates: ${row}, ${column}`)
+                return false;
             }
 
             square.item  = submarine;
             square.id    = i;
         }
-        this.submarines[`${row}-${column}`] = submarine;
+        this.submarines.set(`${row}-${column}`, submarine);
+        return true;
     }
 
     bomb(pos: Point) {
@@ -68,7 +69,7 @@ export class Board {
     }
 
     isSubmarineStarts(row: number, col: number) {
-        return this.submarines[`${row}-${col}`];
+        return this.submarines.get(`${row}-${col}`);
     }
 
     cellAt(pos: Point) {

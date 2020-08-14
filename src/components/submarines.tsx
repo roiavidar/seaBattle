@@ -1,3 +1,5 @@
+/* to be deleted */
+
 import {action, computed, observable} from "mobx";
 import { computedFn } from "mobx-utils";
 import _ from "lodash";
@@ -51,13 +53,14 @@ export class Board {
         for (let i=0; i < coords.length; i++) {
             const square = this.cellAt(coords[i]);
             if (square == null) {
-                throw new Error(`Invalid Coordinates: ${row}, ${column}`)
+                return false;
             }
 
             square.item  = submarine;
             square.id    = i;
         }
         this.submarines.set(`${row}-${column}`, submarine);
+        return true;
     }
 
     bomb(pos: Point) {

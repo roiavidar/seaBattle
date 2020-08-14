@@ -17,16 +17,12 @@ export function useSeaBattleBoardLogic(props: {
 
     function placeSubmarine(submarine: Submarine, row: number, column: number) {
         if (isPreGame()) {
-            try {
-                myBoard.addSubmarine(submarine, row, column);
+            const isToolPlaced = myBoard.addSubmarine(submarine, row, column);
+            if (isToolPlaced) {
                 setSubmarinesCounter(submarinesCounter + 1);
-                return true;
-            } catch {
-                return false;
             }
-        } else {
-            return false;
-        }
+        }            
+        return false;
     }
 
     function play(x: number, y: number) {

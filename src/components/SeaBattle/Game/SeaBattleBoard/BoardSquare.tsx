@@ -1,9 +1,10 @@
 import { CSSProperties } from "react"
 import { useDrop } from "react-dnd"
-import { HorizontalSubmarine, VerticalSubmarine, Board, Submarine } from "../../../submarines"
 import React from "react"
 import { Square } from "./Square"
 import BoardSubmarine from "./Submarine"
+import { SubmarineModel } from "../SubmarinesGameTools"
+import { Board, HorizontalSubmarine, VerticalSubmarine } from "../../../../models/seaBattleBoard"
 
 const styleVerticalSubmarine: CSSProperties = {
     position: 'absolute'
@@ -24,8 +25,13 @@ export function BoardSquare(props: {
         const {rowIndex, colIndex, board, itemsType = ''} = props;
         const [{ isOver, item }, drop] = useDrop({
             accept: itemsType,
-            drop: (item: any) => {
-                return board.addSubmarine(!item.vertical ? new HorizontalSubmarine(item.size) : new VerticalSubmarine(item.size), rowIndex, colIndex)
+            drop: (item: {type: string, submarine: SubmarineModel}) => {
+                const {submarine} = item;
+                submarine.dropped = true;
+                const dropResult = board.addSubmarine(!submarine.vertical ? new HorizontalSubmarine(submarine.size) : new VerticalSubmarine(submarine.size), rowIndex, colIndex)
+                return {
+                    dropResult
+                }
             },
             collect: monitor => ({
               isOver: !!monitor.isOver(),
@@ -42,10 +48,14 @@ export function BoardSquare(props: {
           return (
                 <Square key={colIndex} item={board.cellAt([rowIndex, colIndex])}>
                     <div ref={drop} style={squareStyle}>
-                    {submarine && <div style={styleVerticalSubmarine}><BoardSubmarine vertical={false} size={submarine.size} /></div>}
+                    {submarine && 
+                        <div style={styleVerticalSubmarine}>
+                            <BoardSubmarine size={submarine.size} />
+                        </div>
+                    }
                     {isOver && (
                         <div style={styleVerticalSubmarine}>
-                            <BoardSubmarine vertical={item.vertical} size={item.size} />  
+                            <BoardSubmarine submarine={item.submarine} />  
                         </div>
                     )}
                     </div>

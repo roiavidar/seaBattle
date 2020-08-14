@@ -1,6 +1,6 @@
 import { observer } from "mobx-react";
-import { BoardSquare } from "../../../submarines";
 import React from "react";
+import { BoardSquare } from "../../../../models/seaBattleBoard";
 
 export const Square = observer(function Square({ item, children }: { item?: BoardSquare, children: JSX.Element }) {
     if (!item) {
