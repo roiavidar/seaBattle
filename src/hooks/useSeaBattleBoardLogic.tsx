@@ -43,7 +43,7 @@ export function useSeaBattleBoardLogic(props: {
 
     function enemyTurn(x: number, y: number, result: string) {
         if (result === '/' || result === 'X') {
-            const submarine = new HorizontalSubmarine(1);
+            const submarine = new HorizontalSubmarine(1, false);
             enemyBoard.addSubmarine(submarine, x, y);
         }
 

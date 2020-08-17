@@ -1,6 +1,7 @@
 import { observable } from "mobx";
 import { computedFn } from "mobx-utils";
 import _ from "lodash";
+import { SubmarineModel } from "../components/SeaBattle/Game/SubmarinesGameTools";
 
 type Point = [number, number];
 
@@ -101,16 +102,18 @@ class Sea {
     }
 }
 
-export abstract class Submarine extends Sea {
+export abstract class Submarine extends Sea implements SubmarineModel {
     size: number;
     @observable bombed: Set<number> = new Set();
     @observable sank: boolean = false;
+    vertical: boolean;
 
     abstract getCoordinates(row: number, column: number): Point [];
 
-    constructor(size: number) {
+    constructor(size: number, vertical: boolean) {
         super();
         this.size = size;
+        this.vertical = vertical;
     }
 
     hit(id: number) {

@@ -6,9 +6,28 @@ import BoardSubmarine from "./Submarine"
 import { SubmarineModel } from "../SubmarinesGameTools"
 import { Board, HorizontalSubmarine, VerticalSubmarine } from "../../../../models/seaBattleBoard"
 
-const styleVerticalSubmarine: CSSProperties = {
+const styleHorizontalSubmarine: CSSProperties = {
+    top: 0,
+    transformOrigin: 'center bottom',
+    transform: 'translate(-50%, -50%) rotate(90deg)',
+    width: '100%',
+    height: '100%'
+}
+
+const submarineStyle: CSSProperties = {
     position: 'absolute'
 }
+
+function getSubmarineStyle(submarine: any): CSSProperties {
+    let style = submarineStyle;
+  
+    if (submarine && submarine.vertical) {
+        style = Object.assign({}, style, styleHorizontalSubmarine);
+    }
+  
+    return style;
+  }
+  
 
 const squareStyle: CSSProperties = {
     position: 'relative',
@@ -20,15 +39,20 @@ export function BoardSquare(props: {
         rowIndex: number,
         colIndex: number,
         board: Board,
-        itemsType: string
+        itemsType: string,
+        submarineDropped: () => void,
+        play?: (x: number, y: number) => void
     }){
-        const {rowIndex, colIndex, board, itemsType = ''} = props;
+        const {rowIndex, colIndex, board, itemsType = '', submarineDropped, play} = props;
         const [{ isOver, item }, drop] = useDrop({
             accept: itemsType,
             drop: (item: {type: string, submarine: SubmarineModel}) => {
                 const {submarine} = item;
-                submarine.dropped = true;
-                const dropResult = board.addSubmarine(!submarine.vertical ? new HorizontalSubmarine(submarine.size) : new VerticalSubmarine(submarine.size), rowIndex, colIndex)
+                const dropResult = board.addSubmarine(!submarine.vertical ? new HorizontalSubmarine(submarine.size, false) : new VerticalSubmarine(submarine.size, true), rowIndex, colIndex)
+                if (dropResult) {
+                    submarine.dropped = true;
+                }
+                submarineDropped();
                 return {
                     dropResult
                 }
@@ -43,20 +67,32 @@ export function BoardSquare(props: {
             return board.isSubmarineStarts(rowIndex, colIndex);
           }
 
+          function handlePlay(rowIndex: number, colIndex: number) {
+            play && play(rowIndex, colIndex);
+          }
+
           const submarine = getSubmarine(rowIndex, colIndex);
-          
+         
           return (
-                <Square key={colIndex} item={board.cellAt([rowIndex, colIndex])}>
+                <Square key={colIndex} item={board.cellAt([rowIndex, colIndex])} play={() => handlePlay(rowIndex, colIndex)}>
                     <div ref={drop} style={squareStyle}>
                     {submarine && 
-                        <div style={styleVerticalSubmarine}>
-                            <BoardSubmarine size={submarine.size} />
-                        </div>
+                            <BoardSubmarine 
+                                    submarine={submarine}
+                                    submarineContainer={(drag, submarineJSX) => (
+                                        <div ref={drag} style={getSubmarineStyle(submarine)}>
+                                            {submarineJSX}
+                                        </div>
+                                    )} />
                     }
                     {isOver && (
-                        <div style={styleVerticalSubmarine}>
-                            <BoardSubmarine submarine={item.submarine} />  
-                        </div>
+                            <BoardSubmarine
+                                 submarine={item.submarine}
+                                 submarineContainer={(drag, submarineJSX) => (
+                                    <div ref={drag} style={getSubmarineStyle(item.submarine)}>            
+                                        {submarineJSX}
+                                    </div>
+                                 )} />  
                     )}
                     </div>
                 </Square>

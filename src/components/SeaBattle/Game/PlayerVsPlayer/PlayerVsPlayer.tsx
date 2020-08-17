@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { IGameConfig } from '../../GameSetup/GameSetup.model';
 import SeaBattleBoard from '../SeaBattleBoard/SeaBattleBoard';
 import { useSeaBattleBoardLogic, ISeaBattleBoardLogic } from '../../../../hooks/useSeaBattleBoardLogic';
-import { submarines } from '../SubmarinesGameTools';
+import { submarines, SubmarineModel } from '../SubmarinesGameTools';
 import { ItemsType } from '../SeaBattleBoard/BoardItemsType';
 
 export default function PlayerVsPlayer(props: {
@@ -10,8 +10,10 @@ export default function PlayerVsPlayer(props: {
 }) {
     const {gameSetup} = props;
     const [board, placeSubmarine, play, myTurn, enemyTurn]: ISeaBattleBoardLogic = useSeaBattleBoardLogic({ isPlayingFirst: gameSetup.isPlayingFirst });
-
+    const [submarinesTools, setSubmarinesTools] = useState<SubmarineModel[]>(submarines);
     function safePlay(x: number, y: number) {
+        const item = board.enemyBoard.cellAt([x, y]);
+        item?.bomb();
         if (myTurn) {
             play(x, y)
         }
@@ -23,16 +25,18 @@ export default function PlayerVsPlayer(props: {
             <div>
                 <div>My Board:</div>
                 <SeaBattleBoard
-                    submarines={submarines} 
+                    submarines={submarinesTools}
+                    setSubmarines={setSubmarinesTools} 
                     board={board.myBoard}
                     placeSubmarine={placeSubmarine}
-                    play={safePlay}
                     itemsType={ItemsType.SUBMARINE} />
             </div>
             <div>
                 <div>Enemy Board:</div>
                 <SeaBattleBoard 
-                    board={board.enemyBoard} />
+                    board={board.enemyBoard}
+                    play={safePlay}
+                />
             </div>
         </div>
     )
