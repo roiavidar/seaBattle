@@ -42,7 +42,7 @@ export default function SeaBattleBoard(props: {
     setSubmarines?: (submarines: SubmarineModel[]) => void,
     itemsType?: string
 }) {
-    const {board, submarines=[], itemsType='', setSubmarines, play} = props;
+    const {board, submarines=[], itemsType='', setSubmarines, play, placeSubmarine} = props;
     const [rotateDisable, setRotateDisable] = useState(true);
     const [hideRotate, setHideRotate] = useState(false);
     const [selectedSubmarine, setSelectedSubmarine] = useState<number | null>(null);
@@ -93,6 +93,7 @@ export default function SeaBattleBoard(props: {
                                                 rowIndex={rowIndex}
                                                 colIndex={colIndex}
                                                 play={play}
+                                                addSubmarine={placeSubmarine}
                                                 submarineDropped={onSubmarineDropped} />
                                 })}
                             </tr>

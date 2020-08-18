@@ -11,16 +11,18 @@ export function useSeaBattleBoardLogic(props: {
         myBoard: myBoard, 
         enemyBoard: enemyBoard
     }
-    const [submarinesCounter, setSubmarinesCounter] = useState(0);
-    const maxSubmarines = 6;
+    const [submarinesCounter, setSubmarinesCounter] = useState(myBoard.submarines.size);
+    const maxSubmarines = 8;
     const [myTurn, setMyTurn] = useState(isPlayingFirst);
 
     function placeSubmarine(submarine: Submarine, row: number, column: number) {
         if (isPreGame()) {
             const isToolPlaced = myBoard.addSubmarine(submarine, row, column);
+            console.log(isToolPlaced);
             if (isToolPlaced) {
                 setSubmarinesCounter(submarinesCounter + 1);
             }
+            return isToolPlaced;
         }            
         return false;
     }
@@ -41,7 +43,7 @@ export function useSeaBattleBoardLogic(props: {
         return submarinesCounter < maxSubmarines;
     }
 
-    function enemyTurn(x: number, y: number, result: string) {
+    function enemyRespond(x: number, y: number, result: string) {
         if (result === '/' || result === 'X') {
             const submarine = new HorizontalSubmarine(1, false);
             enemyBoard.addSubmarine(submarine, x, y);
@@ -56,7 +58,7 @@ export function useSeaBattleBoardLogic(props: {
         }
     }
 
-    return [board, placeSubmarine, play, myTurn, enemyTurn]
+    return [board, placeSubmarine, play, myTurn, enemyRespond]
 }
 
 export type ISeaBattleBoardLogic = [

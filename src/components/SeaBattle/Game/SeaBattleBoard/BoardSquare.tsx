@@ -4,7 +4,7 @@ import React from "react"
 import { Square } from "./Square"
 import BoardSubmarine from "./Submarine"
 import { SubmarineModel } from "../SubmarinesGameTools"
-import { Board, HorizontalSubmarine, VerticalSubmarine } from "../../../../models/seaBattleBoard"
+import { Board, HorizontalSubmarine, VerticalSubmarine, Submarine } from "../../../../models/seaBattleBoard"
 
 const styleHorizontalSubmarine: CSSProperties = {
     top: 0,
@@ -41,14 +41,15 @@ export function BoardSquare(props: {
         board: Board,
         itemsType: string,
         submarineDropped: () => void,
+        addSubmarine: ((submarine: Submarine, row: number, column: number) => boolean) | undefined,
         play?: (x: number, y: number) => void
     }){
-        const {rowIndex, colIndex, board, itemsType = '', submarineDropped, play} = props;
+        const {rowIndex, colIndex, board, itemsType = '', submarineDropped, play, addSubmarine} = props;
         const [{ isOver, item }, drop] = useDrop({
             accept: itemsType,
             drop: (item: {type: string, submarine: SubmarineModel}) => {
                 const {submarine} = item;
-                const dropResult = board.addSubmarine(!submarine.vertical ? new HorizontalSubmarine(submarine.size, false) : new VerticalSubmarine(submarine.size, true), rowIndex, colIndex)
+                const dropResult = addSubmarine && addSubmarine(!submarine.vertical ? new HorizontalSubmarine(submarine.size, false) : new VerticalSubmarine(submarine.size, true), rowIndex, colIndex)
                 if (dropResult) {
                     submarine.dropped = true;
                 }
