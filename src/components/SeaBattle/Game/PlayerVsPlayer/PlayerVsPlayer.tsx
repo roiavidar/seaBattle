@@ -11,8 +11,8 @@ export default function PlayerVsPlayer(props: {
     const {gameSetup} = props;
     const playerTurn = gameSetup.isPlayingFirst ? 0 : 1;
     const [enemyReady, setEnemyReady] = useState(false);
-    const [board, placeSubmarine, play, myTurn, enemyRespond, IamReady, winner]: ISeaBattleBoardLogic = useSeaBattleBoardLogic({ isPlayingFirst: gameSetup.isPlayingFirst });
     const [submarinesTools, setSubmarinesTools] = useState<SubmarineModel[]>(getSubmarines());
+    const [board, placeSubmarine, play, myTurn, enemyRespond, IamReady, winner]: ISeaBattleBoardLogic = useSeaBattleBoardLogic({ numberOfSubmarines: submarinesTools.length, isPlayingFirst: gameSetup.isPlayingFirst });
     const [enemySubmarinesTools, setEnemySubmarinesTools] = useState<SubmarineModel[]>(getSubmarines());
 
     useEffect(() => {
@@ -160,6 +160,7 @@ export default function PlayerVsPlayer(props: {
                 <SeaBattleBoard 
                     board={board.enemyBoard}
                     play={safePlay}
+                    hideRotate={true}
                     submarines={enemySubmarinesTools.filter((submarine: SubmarineModel) => submarine.dropped)}
                 />
             </div>

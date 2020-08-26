@@ -40,11 +40,12 @@ export default function SeaBattleBoard(props: {
     placeSubmarine?: (submarine: Submarine, row: number, column: number) => boolean,
     submarines?: SubmarineModel[],
     setSubmarines?: (submarines: SubmarineModel[]) => void,
-    itemsType?: string
+    itemsType?: string,
+    hideRotate?: boolean
 }) {
     const {board, submarines=[], itemsType='', setSubmarines, play, placeSubmarine} = props;
     const [rotateDisable, setRotateDisable] = useState(true);
-    const [hideRotate, setHideRotate] = useState(false);
+    const [hideRotate, setHideRotate] = useState(props.hideRotate || false);
     const [selectedSubmarine, setSelectedSubmarine] = useState<number | null>(null);
 
     function rotateHandler() {

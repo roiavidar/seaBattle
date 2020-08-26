@@ -2,9 +2,10 @@ import { useRef, useState } from 'react';
 import { Board, Submarine, HorizontalSubmarine, VerticalSubmarine, Point } from '../models/seaBattleBoard';
 
 export function useSeaBattleBoardLogic(props: {
-    isPlayingFirst: boolean
+    isPlayingFirst: boolean,
+    numberOfSubmarines: number
 }): ISeaBattleBoardLogic {
-    const {isPlayingFirst} = props;
+    const {isPlayingFirst, numberOfSubmarines} = props;
     const myBoard = useRef(new Board(10, 10)).current;
     const enemyBoard = useRef(new Board(10, 10)).current;
     const board = {
@@ -12,7 +13,7 @@ export function useSeaBattleBoardLogic(props: {
         enemyBoard: enemyBoard
     }
     const [submarinesCounter, setSubmarinesCounter] = useState(myBoard.submarines.size);
-    const maxSubmarines = 8;
+    const maxSubmarines = numberOfSubmarines;
     const [myTurn, setMyTurn] = useState(isPlayingFirst);
     const [IamReady, setIamReady] = useState(false);
     const [winner, setWinner] = useState<number | undefined>(undefined);
