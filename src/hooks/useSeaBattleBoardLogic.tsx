@@ -12,7 +12,7 @@ export function useSeaBattleBoardLogic(props: {
         enemyBoard: enemyBoard
     }
     const [submarinesCounter, setSubmarinesCounter] = useState(myBoard.submarines.size);
-    const maxSubmarines = 2;
+    const maxSubmarines = 8;
     const [myTurn, setMyTurn] = useState(isPlayingFirst);
     const [IamReady, setIamReady] = useState(false);
     const [winner, setWinner] = useState<number | undefined>(undefined);
