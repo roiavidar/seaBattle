@@ -3,7 +3,7 @@ import { computedFn } from "mobx-utils";
 import _ from "lodash";
 import { SubmarineModel } from "../components/SeaBattle/Game/SubmarinesGameTools";
 
-type Point = [number, number];
+export type Point = [number, number];
 
 export class BoardSquare {
     @observable item: Submarine|Sea;
@@ -62,6 +62,20 @@ export class Board {
         return true;
     }
 
+    removeSubmarine(coords: Point[]) {
+        for (let i=0; i < coords.length; i++) {
+            const square = this.cellAt(coords[i]);
+            if (square == null) {
+                return false;
+            }
+
+            square.item  = new Sea();
+            square.revealed = false;
+            this.submarines.delete(`${coords[i][0]}-${coords[i][1]}`);
+        }
+        return true;
+    }
+
     bomb(pos: Point) {
         const square = this.cellAt(pos);
         if (square == null || square.revealed) return;
@@ -107,6 +121,9 @@ export abstract class Submarine extends Sea implements SubmarineModel {
     @observable bombed: Set<number> = new Set();
     @observable sank: boolean = false;
     vertical: boolean;
+    row: number | undefined;
+    col: number | undefined;
+    hide: boolean | undefined;
 
     abstract getCoordinates(row: number, column: number): Point [];
 
@@ -134,12 +151,20 @@ export abstract class Submarine extends Sea implements SubmarineModel {
 }
 
 export class VerticalSubmarine extends Submarine {
+    constructor(size: number) {
+        super(size, true);
+    }
+
     getCoordinates(row: number, column: number) {
         return _.range(this.size).map((i): Point => ([row + i, column]));
     }
 }
 
 export class HorizontalSubmarine extends Submarine {
+    constructor(size: number) {
+        super(size, false);
+    }
+
     getCoordinates(row: number, column: number) {
         return _.range(this.size).map((i): Point => ([row, column + i]));
     }

@@ -42,14 +42,15 @@ export function BoardSquare(props: {
         itemsType: string,
         submarineDropped: () => void,
         addSubmarine: ((submarine: Submarine, row: number, column: number) => boolean) | undefined,
-        play?: (x: number, y: number) => void
+        play?: (x: number, y: number) => void,
+        showSubmarines: boolean
     }){
-        const {rowIndex, colIndex, board, itemsType = '', submarineDropped, play, addSubmarine} = props;
+        const {rowIndex, colIndex, board, itemsType = '', submarineDropped, play, addSubmarine, showSubmarines} = props;
         const [{ isOver, item }, drop] = useDrop({
             accept: itemsType,
             drop: (item: {type: string, submarine: SubmarineModel}) => {
                 const {submarine} = item;
-                const dropResult = addSubmarine && addSubmarine(!submarine.vertical ? new HorizontalSubmarine(submarine.size, false) : new VerticalSubmarine(submarine.size, true), rowIndex, colIndex)
+                const dropResult = addSubmarine && addSubmarine(!submarine.vertical ? new HorizontalSubmarine(submarine.size) : new VerticalSubmarine(submarine.size), rowIndex, colIndex)
                 if (dropResult) {
                     submarine.dropped = true;
                 }
@@ -77,7 +78,7 @@ export function BoardSquare(props: {
           return (
                 <Square key={colIndex} item={board.cellAt([rowIndex, colIndex])} play={() => handlePlay(rowIndex, colIndex)}>
                     <div ref={drop} style={squareStyle}>
-                    {submarine && 
+                    {submarine && showSubmarines &&
                             <BoardSubmarine 
                                     submarine={submarine}
                                     submarineContainer={(drag, submarineJSX) => (

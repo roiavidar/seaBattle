@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react';
-import { Board, Submarine, HorizontalSubmarine } from '../models/seaBattleBoard';
+import { Board, Submarine, HorizontalSubmarine, VerticalSubmarine, Point } from '../models/seaBattleBoard';
 
 export function useSeaBattleBoardLogic(props: {
     isPlayingFirst: boolean
@@ -12,14 +12,20 @@ export function useSeaBattleBoardLogic(props: {
         enemyBoard: enemyBoard
     }
     const [submarinesCounter, setSubmarinesCounter] = useState(myBoard.submarines.size);
-    const maxSubmarines = 8;
+    const maxSubmarines = 2;
     const [myTurn, setMyTurn] = useState(isPlayingFirst);
+    const [IamReady, setIamReady] = useState(false);
+    const [winner, setWinner] = useState<number | undefined>(undefined);
 
     function placeSubmarine(submarine: Submarine, row: number, column: number) {
         if (isPreGame()) {
             const isToolPlaced = myBoard.addSubmarine(submarine, row, column);
-            console.log(isToolPlaced);
             if (isToolPlaced) {
+                submarine.row = row;
+                submarine.col = column;
+                if (maxSubmarines === submarinesCounter + 1) {
+                    setIamReady(true);
+                }
                 setSubmarinesCounter(submarinesCounter + 1);
             }
             return isToolPlaced;
@@ -28,12 +34,27 @@ export function useSeaBattleBoardLogic(props: {
     }
 
     function play(x: number, y: number) {
+
         if (!isPreGame()) {
             const bombResult = myBoard.bomb([x, y]);
+            let coords;
             if (bombResult === 'X' || bombResult === '0') {
+                setMyTurn(true);
+            } else {
                 setMyTurn(false);
             }
-            return bombResult;
+
+            if (bombResult === 'X') {
+                const cell = myBoard.cellAt([x,y]);
+                const submarine = cell?.item as Submarine;
+                coords = submarine.getCoordinates(submarine.row as number, submarine.col as number);
+                checkAndSetWinner(myBoard, isPlayingFirst ? 1 : 0);
+            }
+
+            return {
+                bombResult,
+                coords
+            };
         } else {
             return false;
         }
@@ -43,22 +64,57 @@ export function useSeaBattleBoardLogic(props: {
         return submarinesCounter < maxSubmarines;
     }
 
-    function enemyRespond(x: number, y: number, result: string) {
-        if (result === '/' || result === 'X') {
-            const submarine = new HorizontalSubmarine(1, false);
-            enemyBoard.addSubmarine(submarine, x, y);
+    function getSubmarine(coords: Point[]) {
+        if (coords.length <= 1) {
+            return new HorizontalSubmarine(coords.length);   
         }
 
-        const bombResult = enemyBoard.bomb([x, y]);
+        const coordA = coords[0];
+        const coordB = coords[1];
 
-        if (bombResult === '/') {
-            setMyTurn(false);
+        if (coordA[0] === coordB[0]) {
+            return new HorizontalSubmarine(coords.length);
         } else {
-            setMyTurn(true);
+            return new VerticalSubmarine(coords.length);
         }
     }
 
-    return [board, placeSubmarine, play, myTurn, enemyRespond]
+    function enemyRespond(x: number, y: number, bombResult: string, coords: Point[]) {
+        if (bombResult === 'X') {
+            enemyBoard.removeSubmarine(coords);
+            const submarine = getSubmarine(coords);
+            enemyBoard.addSubmarine(submarine, coords[0][0], coords[0][1]);
+            coords.forEach((coord: Point) => {
+                enemyBoard.bomb(coord);
+            });
+            setMyTurn(false);
+            checkAndSetWinner(enemyBoard, isPlayingFirst ? 0 : 1);
+        } else if (bombResult === '/') {
+            const submarine = new HorizontalSubmarine(1);
+            enemyBoard.addSubmarine(submarine, x, y);
+            enemyBoard.bomb([x, y]);
+            submarine.sank = false;
+            submarine.hide = true;
+            setMyTurn(true);
+        } else {
+            enemyBoard.bomb([x, y]);
+            setMyTurn(false);
+        }
+    }
+
+    function checkAndSetWinner(board: Board, player: number) {
+        let shipsSank = 0;
+        board.submarines.forEach((submarine: Submarine) => {
+            if (submarine.sank) {
+                shipsSank++;
+            }
+        });
+        if (shipsSank === maxSubmarines) {
+            setWinner(player);
+        }
+    }
+
+    return [board, placeSubmarine, play, myTurn, enemyRespond, IamReady, winner]
 }
 
 export type ISeaBattleBoardLogic = [
@@ -67,7 +123,9 @@ export type ISeaBattleBoardLogic = [
         enemyBoard: Board
     },
     (submarine: Submarine, row: number, column: number) => boolean,
-    (x: number, y: number) => boolean | string | undefined,
+    (x: number, y: number) => boolean | {bombResult: string | undefined, coords: Point[] | undefined},
     boolean,
-    (x: number, y: number, result: string) => void
+    (x: number, y: number, bombResult: string, coords: Point[]) => void,
+    boolean,
+    number | undefined
 ]

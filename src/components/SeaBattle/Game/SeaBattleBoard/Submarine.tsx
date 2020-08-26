@@ -32,7 +32,6 @@ export default function Submarine(props: {
       const imageUrl = `media/${submarineSize}-square-submarine.jpg`;
       return (
         submarineContainer(drag, 
-          !submarine?.dropped ?
           <>
            <DragPreviewImage src={previewImage} connect={preview} />
            <img 
@@ -43,7 +42,6 @@ export default function Submarine(props: {
               style={getSubmarineStyle(isDragging)}
             />
           </>
-           :
-          null)
+        )
       )
 }

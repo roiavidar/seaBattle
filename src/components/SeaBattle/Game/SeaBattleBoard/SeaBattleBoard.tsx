@@ -68,6 +68,7 @@ export default function SeaBattleBoard(props: {
     function onSubmarineDropped() {
         setRotateDisable(true);
         setSelectedSubmarine(null);
+        setSubmarines && setSubmarines([...submarines]);
         if (isAllSubmarinePlaced()) {
             setHideRotate(true);
         }
@@ -94,7 +95,8 @@ export default function SeaBattleBoard(props: {
                                                 colIndex={colIndex}
                                                 play={play}
                                                 addSubmarine={placeSubmarine}
-                                                submarineDropped={onSubmarineDropped} />
+                                                submarineDropped={onSubmarineDropped}
+                                                showSubmarines={submarines.length !== 0} />
                                 })}
                             </tr>
                         ))}
@@ -103,7 +105,8 @@ export default function SeaBattleBoard(props: {
                     <div>
                         {
                             submarines.map((submarine: SubmarineModel, index: number) => (
-                                        <BoardSubmarine 
+                                            !submarine?.dropped ?
+                                                <BoardSubmarine 
                                                 key={submarine.id}
                                                 itemsType={itemsType}
                                                 submarine={submarine}
@@ -111,7 +114,8 @@ export default function SeaBattleBoard(props: {
                                                     <div ref={drag} style={getSubmarineStyle(index, selectedSubmarine, submarine)} onClick={() => onSubmarineSelected(index)}>
                                                         {submarineJSX}
                                                     </div>
-                                                )} />  
+                                                )} />
+                                                : null 
                                 ))
                         }
                     </div>

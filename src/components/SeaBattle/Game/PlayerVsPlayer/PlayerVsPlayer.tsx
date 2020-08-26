@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { IGameConfig } from '../../GameSetup/GameSetup.model';
 import SeaBattleBoard from '../SeaBattleBoard/SeaBattleBoard';
 import { useSeaBattleBoardLogic, ISeaBattleBoardLogic } from '../../../../hooks/useSeaBattleBoardLogic';
-import { submarines, SubmarineModel } from '../SubmarinesGameTools';
+import { getSubmarines, SubmarineModel } from '../SubmarinesGameTools';
 import { ItemsType } from '../SeaBattleBoard/BoardItemsType';
 import { firebase } from '../../../../libraries/firebase';
 export default function PlayerVsPlayer(props: {
@@ -10,8 +10,10 @@ export default function PlayerVsPlayer(props: {
 }) {
     const {gameSetup} = props;
     const playerTurn = gameSetup.isPlayingFirst ? 0 : 1;
-    const [board, placeSubmarine, play, myTurn, enemyRespond]: ISeaBattleBoardLogic = useSeaBattleBoardLogic({ isPlayingFirst: gameSetup.isPlayingFirst });
-    const [submarinesTools, setSubmarinesTools] = useState<SubmarineModel[]>(submarines);
+    const [enemyReady, setEnemyReady] = useState(false);
+    const [board, placeSubmarine, play, myTurn, enemyRespond, IamReady, winner]: ISeaBattleBoardLogic = useSeaBattleBoardLogic({ isPlayingFirst: gameSetup.isPlayingFirst });
+    const [submarinesTools, setSubmarinesTools] = useState<SubmarineModel[]>(getSubmarines());
+    const [enemySubmarinesTools, setEnemySubmarinesTools] = useState<SubmarineModel[]>(getSubmarines());
 
     useEffect(() => {
         const unsubscribe = firebase.firestore().collection("game")
@@ -22,40 +24,87 @@ export default function PlayerVsPlayer(props: {
                 batch.push({id: doc.id, ...doc.data()});
             });
 
-            const lastTurn = batch[batch.length - 1];
-            if (lastTurn && (lastTurn.player === playerTurn && lastTurn.bombResult !== '')) {
-                enemyRespond(lastTurn.x, lastTurn.y, lastTurn.bombResult);
-            } else if (lastTurn && (lastTurn.player !== playerTurn && lastTurn.bombResult === '')) {
-                const bombResult = play(lastTurn.x, lastTurn.y);
-                notifyBombResult(lastTurn, bombResult);
+            batch.sort((itemA: { time: number; }, itemB: { time: number; }) => itemB.time - itemA.time);
+            const lastTurn = batch[0];
+            if (lastTurn) {
+                if (isMyMoveResult(lastTurn)) {
+                    const coords = JSON.parse(lastTurn.coords);
+                    enemyRespond(lastTurn.x, lastTurn.y, lastTurn.bombResult, coords);
+                    if (lastTurn.bombResult === 'X') {
+                        const enemySubmarine = enemySubmarinesTools.filter((submarine: SubmarineModel) => submarine.size === coords.length && !submarine.dropped);
+
+                        if (enemySubmarine.length !== 0) {
+                            enemySubmarine[0].dropped = true;
+                            setEnemySubmarinesTools([...enemySubmarinesTools]);
+                        }
+                    }
+                } else if (isEnemyMove(lastTurn)) {
+                    const result = play(lastTurn.x, lastTurn.y);
+                    if (result !== false) {
+                        notifyBombResult(lastTurn, result);    
+                    }
+                } else if (!enemyReady && isEnemyPlayerReady(lastTurn.ready)) {
+                    setEnemyReady(true);
+                }
+            }
+
+            function isMyMoveResult(lastTurn: any) {
+                return lastTurn.player === playerTurn && lastTurn.bombResult !== '';
+            }
+
+            function isEnemyMove(lastTurn: any) {
+                return enemyReady && lastTurn.x !== -1 && lastTurn.player !== playerTurn && lastTurn.bombResult === '';
+            }
+
+            function isEnemyPlayerReady(playerReady: number) {
+                const me = gameSetup.isPlayingFirst ? 0 : 1;
+                return playerReady !== me;
+            }
+            
+
+            function notifyBombResult(lastTurn: any, result: any) {
+                const db = firebase.firestore();
+                db
+                .collection('game')
+                .add({
+                    roomId: gameSetup.id,
+                    player: lastTurn.player,
+                    bombResult: result.bombResult,
+                    coords: JSON.stringify(result.coords || []),
+                    x: lastTurn.x,
+                    y: lastTurn.y,
+                    time: new Date().getTime()
+                });
             }
         });
 
         return function() {
             unsubscribe();
         }
-    }, []);
+    }, [enemyRespond, gameSetup.id, play, playerTurn]);
+
+
+    useEffect(() => {
+        if (IamReady) {
+            const db = firebase.firestore();
+            db
+            .collection('game')
+            .add({
+                roomId: gameSetup.id,
+                player: playerTurn,
+                bombResult: '',
+                x: -1,
+                y: -1,
+                ready: playerTurn,
+                time: new Date().getTime()
+            });
+        }
+    }, [IamReady]);
 
     function safePlay(x: number, y: number) {
-        // const item = board.enemyBoard.cellAt([x, y]);
-        // item?.bomb();
-        if (myTurn) {
-            // const result = play(x, y);
+        if (myTurn && winner === undefined) {
             askForMoveResult(x, y);
         }
-    }
-
-    function notifyBombResult(lastTurn: any, bombResult: any) {
-        const db = firebase.firestore();
-        db
-        .collection('game')
-        .add({
-            roomId: gameSetup.id,
-            player: lastTurn.player,
-            bombResult,
-            x: lastTurn.x,
-            y: lastTurn.y
-        });
     }
 
     function askForMoveResult(x: number, y: number) {
@@ -67,13 +116,36 @@ export default function PlayerVsPlayer(props: {
             player: playerTurn,
             bombResult: '',
             x,
-            y
+            y,
+            time: new Date().getTime()
         });
+    }
+
+    function getTurnStatusMessage() {
+        if (IamReady) {
+            if (enemyReady) {
+                return myTurn ? 'Bomb a square !' : 'Wait for other player turn';
+            } else {
+                return 'Waiting for other player';
+            }
+        } else {
+            return 'Place your submarines';
+        }
+    }
+
+    function getWinnerMessage() {
+        return winner === playerTurn ? 'You Win !' : 'You Lose, try again !';
     }
 
     return (
         <div>
-            <div>{myTurn ? 'Bomb a square !' : 'Wait for other player turn'}</div>
+            <div>Playing {gameSetup.isPlayingFirst ? 'first' : 'second'}</div>
+            <div>
+                {winner !== undefined ?
+                    getWinnerMessage() :
+                    getTurnStatusMessage()
+                }
+            </div>
             <div>
                 <div>My Board:</div>
                 <SeaBattleBoard
@@ -88,6 +160,7 @@ export default function PlayerVsPlayer(props: {
                 <SeaBattleBoard 
                     board={board.enemyBoard}
                     play={safePlay}
+                    submarines={enemySubmarinesTools.filter((submarine: SubmarineModel) => submarine.dropped)}
                 />
             </div>
         </div>
