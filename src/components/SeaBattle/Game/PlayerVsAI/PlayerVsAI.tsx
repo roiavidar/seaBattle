@@ -77,6 +77,9 @@ export default function PlayerVsAI() {
             bombResult: string;
             coords: Point[];
         };
+        
+        if (moveResult.bombResult === undefined) return;
+
         enemyRespond(x, y, moveResult.bombResult, moveResult.coords);
         if (moveResult.bombResult === 'X') {
             const enemySubmarine = enemySubmarinesTools.filter((submarine: SubmarineModel) => submarine.size === moveResult.coords.length && !submarine.dropped);
