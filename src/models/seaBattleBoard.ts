@@ -124,13 +124,15 @@ export abstract class Submarine extends Sea implements SubmarineModel {
     row: number | undefined;
     col: number | undefined;
     hide: boolean | undefined;
+    partial: boolean;
 
     abstract getCoordinates(row: number, column: number): Point [];
 
-    constructor(size: number, vertical: boolean) {
+    constructor(size: number, vertical: boolean, partial: boolean = false) {
         super();
         this.size = size;
         this.vertical = vertical;
+        this.partial = partial;
     }
 
     hit(id: number) {
@@ -151,8 +153,8 @@ export abstract class Submarine extends Sea implements SubmarineModel {
 }
 
 export class VerticalSubmarine extends Submarine {
-    constructor(size: number) {
-        super(size, true);
+    constructor(size: number, partial: boolean = false) {
+        super(size, true, partial);
     }
 
     getCoordinates(row: number, column: number) {
@@ -161,8 +163,8 @@ export class VerticalSubmarine extends Submarine {
 }
 
 export class HorizontalSubmarine extends Submarine {
-    constructor(size: number) {
-        super(size, false);
+    constructor(size: number, partial: boolean = false) {
+        super(size, false, partial);
     }
 
     getCoordinates(row: number, column: number) {

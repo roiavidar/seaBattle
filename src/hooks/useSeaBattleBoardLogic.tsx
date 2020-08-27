@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import { Board, Submarine, HorizontalSubmarine, VerticalSubmarine, Point } from '../models/seaBattleBoard';
 
 export function useSeaBattleBoardLogic(props: {
@@ -6,8 +6,8 @@ export function useSeaBattleBoardLogic(props: {
     numberOfSubmarines: number
 }): ISeaBattleBoardLogic {
     const {isPlayingFirst, numberOfSubmarines} = props;
-    const myBoard = useRef(new Board(10, 10)).current;
-    const enemyBoard = useRef(new Board(10, 10)).current;
+    const [myBoard, setMyBoard] = useState(new Board(10, 10));
+    const [enemyBoard, setEnemyBoard] = useState(new Board(10, 10));
     const board = {
         myBoard: myBoard, 
         enemyBoard: enemyBoard
@@ -35,14 +35,15 @@ export function useSeaBattleBoardLogic(props: {
     }
 
     function play(x: number, y: number) {
-
         if (!isPreGame()) {
             const bombResult = myBoard.bomb([x, y]);
-            let coords;
-            if (bombResult === 'X' || bombResult === '0') {
-                setMyTurn(true);
-            } else {
-                setMyTurn(false);
+            let coords: Point[] = [];
+            if (bombResult) {
+                if (bombResult === 'X' || bombResult === '0') {
+                    setMyTurn(true);
+                } else {
+                    setMyTurn(false);
+                }
             }
 
             if (bombResult === 'X') {
@@ -91,7 +92,7 @@ export function useSeaBattleBoardLogic(props: {
             setMyTurn(false);
             checkAndSetWinner(enemyBoard, isPlayingFirst ? 0 : 1);
         } else if (bombResult === '/') {
-            const submarine = new HorizontalSubmarine(1);
+            const submarine = new HorizontalSubmarine(1, true);
             enemyBoard.addSubmarine(submarine, x, y);
             enemyBoard.bomb([x, y]);
             submarine.sank = false;

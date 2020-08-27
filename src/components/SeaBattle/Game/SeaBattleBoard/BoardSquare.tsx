@@ -78,7 +78,7 @@ export function BoardSquare(props: {
           return (
                 <Square key={colIndex} item={board.cellAt([rowIndex, colIndex])} play={() => handlePlay(rowIndex, colIndex)}>
                     <div ref={drop} style={squareStyle}>
-                    {submarine && showSubmarines &&
+                    {submarine && showSubmarines && !submarine.partial &&
                             <BoardSubmarine 
                                     submarine={submarine}
                                     submarineContainer={(drag, submarineJSX) => (

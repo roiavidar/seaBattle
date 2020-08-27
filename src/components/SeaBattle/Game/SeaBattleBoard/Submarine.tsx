@@ -28,7 +28,7 @@ export default function Submarine(props: {
           isDragging: !!monitor.isDragging()
         })
       });
-
+      
       const imageUrl = `media/${submarineSize}-square-submarine.jpg`;
       return (
         submarineContainer(drag, 
