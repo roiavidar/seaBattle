@@ -1,9 +1,7 @@
 import React from 'react';
 import { IGameConfig } from '../../GameSetup/GameSetup.model';
-import SeaBattleBoard from '../SeaBattleBoard/SeaBattleBoard';
-import { ItemsType } from '../SeaBattleBoard/BoardItemsType';
-import { SubmarineModel } from '../submarine.model';
 import { useSeaBattlePlayerVsPlayer } from '../../../../hooks/useSeaBattlePlayerVsPlayer';
+import SeaBattlePlayerAndEnemyBoard from '../SeaBattleBoard/SeaBattlePlayerAndEnemyBoard';
 export default function PlayerVsPlayer(props: {
     gameSetup: IGameConfig
 }) {
@@ -13,30 +11,17 @@ export default function PlayerVsPlayer(props: {
     return (
         <div>
             <div>Playing {gameSetup.isPlayingFirst ? 'first' : 'second'}</div>
-            <div>
-                {winner !== undefined ?
-                    getWinnerMessage() :
-                    getTurnStatusMessage()
-                }
-            </div>
-            <div>
-                <div>My Board:</div>
-                <SeaBattleBoard
-                    submarines={submarinesTools}
-                    setSubmarines={setSubmarinesTools} 
-                    board={board.myBoard}
-                    placeSubmarine={placeSubmarine}
-                    itemsType={ItemsType.SUBMARINE} />
-            </div>
-            <div>
-                <div>Enemy Board:</div>
-                <SeaBattleBoard 
-                    board={board.enemyBoard}
-                    play={safePlay}
-                    hideRotate={true}
-                    submarines={enemySubmarinesTools.filter((submarine: SubmarineModel) => submarine.dropped)}
-                />
-            </div>
+            <SeaBattlePlayerAndEnemyBoard
+                winner={winner}
+                getWinnerMessage={getWinnerMessage}
+                getTurnStatusMessage={getTurnStatusMessage}
+                submarinesTools={submarinesTools}
+                setSubmarinesTools={setSubmarinesTools}
+                board={board}
+                placeSubmarine={placeSubmarine}
+                safePlay={safePlay}
+                enemySubmarinesTools={enemySubmarinesTools}
+            />
         </div>
     )
 }

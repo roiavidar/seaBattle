@@ -40,7 +40,7 @@ export function BoardSquare(props: {
         colIndex: number,
         board: Board,
         itemsType: string,
-        submarineDropped: () => void,
+        submarineDropped?: () => void,
         addSubmarine: ((submarine: Submarine, row: number, column: number) => boolean) | undefined,
         play?: (x: number, y: number) => void,
         showSubmarines: boolean
@@ -54,7 +54,7 @@ export function BoardSquare(props: {
                 if (dropResult) {
                     submarine.dropped = true;
                 }
-                submarineDropped();
+                submarineDropped && submarineDropped();
                 return {
                     dropResult
                 }
