@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { SubmarineModel, getSubmarines } from '../SubmarinesGameTools';
+import { getSubmarines } from '../SubmarinesGameTools';
 import { ISeaBattleBoardLogic, useSeaBattleBoardLogic } from '../../../../hooks/useSeaBattleBoardLogic';
 import { HorizontalSubmarine, Point } from '../../../../models/seaBattleBoard';
 import SeaBattleBoard from '../SeaBattleBoard/SeaBattleBoard';
 import { ItemsType } from '../SeaBattleBoard/BoardItemsType';
+import { SubmarineModel } from '../submarine.model';
 
 export default function PlayerVsAI() {
     const playerTurn = 0;

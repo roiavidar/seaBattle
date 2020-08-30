@@ -1,6 +1,6 @@
 import { useDrag, DragPreviewImage } from "react-dnd";
 import React, { CSSProperties } from "react";
-import { SubmarineModel } from "../SubmarinesGameTools";
+import { SubmarineModel } from "../submarine.model";
 
 function getSubmarineStyle(isDragging: boolean) {
   let style: CSSProperties = {

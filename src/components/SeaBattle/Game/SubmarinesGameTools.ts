@@ -1,10 +1,4 @@
-export interface SubmarineModel {
-    vertical: boolean;
-    size: number;
-    dropped?: boolean;
-    id?: number;
-    hide?: boolean;
-}
+import { SubmarineModel } from "./submarine.model"
 
 export const getSubmarines: () => SubmarineModel[] = function getSubmarines() {
     return [

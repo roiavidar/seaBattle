@@ -5,7 +5,7 @@ import _ from 'lodash';
 import { BoardSquare } from './BoardSquare';
 import { Submarine, Board } from '../../../../models/seaBattleBoard';
 import BoardSubmarine from './Submarine';
-import { SubmarineModel } from '../SubmarinesGameTools';
+import { SubmarineModel } from '../submarine.model';
 
 const submarineSelectedBorder = {
     border: "1px solid green",

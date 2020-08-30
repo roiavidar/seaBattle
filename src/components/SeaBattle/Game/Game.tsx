@@ -1,24 +1,14 @@
 import React from 'react';
 import { IGameConfig } from '../GameSetup/GameSetup.model';
-import { firebase } from '../../../libraries/firebase';
 import PlayerVsPlayer from './PlayerVsPlayer/PlayerVsPlayer';
 import PlayerVsAI from './PlayerVsAI/PlayerVsAI';
+import { handleCloseGame } from './closeGame';
 
 export default function Game(props: {
     onBackHandler: () => void,
     gameSetup: IGameConfig
 }) {
     const {onBackHandler, gameSetup} = props;
-
-    function handleCloseGame() {
-        const db = firebase.firestore();
-        db.collection('rooms').doc(gameSetup.id).update({
-            active: 'false',
-            connectedPlayers: 2,
-            numberOfPlayers: 2
-        });
-        onBackHandler();
-    }
 
     return (
         <div>
@@ -29,7 +19,7 @@ export default function Game(props: {
                 :
                 <PlayerVsAI />
             }
-            <button onClick={handleCloseGame}>Back</button>
+            <button onClick={() => handleCloseGame(gameSetup, onBackHandler)}>Back</button>
         </div>
     )
 }

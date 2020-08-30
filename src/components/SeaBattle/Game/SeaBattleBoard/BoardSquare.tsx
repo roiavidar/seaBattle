@@ -3,8 +3,8 @@ import { useDrop } from "react-dnd"
 import React from "react"
 import { Square } from "./Square"
 import BoardSubmarine from "./Submarine"
-import { SubmarineModel } from "../SubmarinesGameTools"
 import { Board, HorizontalSubmarine, VerticalSubmarine, Submarine } from "../../../../models/seaBattleBoard"
+import { SubmarineModel } from "../submarine.model"
 
 const styleHorizontalSubmarine: CSSProperties = {
     top: 0,

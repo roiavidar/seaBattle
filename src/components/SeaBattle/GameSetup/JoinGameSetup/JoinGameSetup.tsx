@@ -2,29 +2,13 @@ import React from 'react';
 import { IGameConfig, IRoomMetaData } from '../GameSetup.model';
 import { useRoomsData } from '../../../../hooks/useRoomsData';
 import RoomData from './RoomData';
-import { firebase } from '../../../../libraries/firebase';
+import { join } from './joinGame';
 
 export default function JoinGameSetup(props: {
     done: (gameSetup: IGameConfig) => void
 }) {
     const {done} = props;
     const roomsData: IRoomMetaData[] | null = useRoomsData();
-
-    function join(roomData: IRoomMetaData) {
-        const db = firebase.firestore();
-        db.collection('rooms').doc(roomData.id).update({
-            active: 'false',
-            connectedPlayers: 2,
-            numberOfPlayers: 2
-        });
-
-        done({
-            id: roomData.id,
-            vsPlayer: true,
-            roomName: roomData.name,
-            isPlayingFirst: false
-        });
-    }
 
     if (!roomsData) {
         return (
@@ -37,7 +21,7 @@ export default function JoinGameSetup(props: {
             {   roomsData.length !== 0
                 ?
                 roomsData.map((data: IRoomMetaData) => (
-                    <RoomData key={data.id} info={data} join={() => join(data)} />
+                    <RoomData key={data.id} info={data} join={() => join(data, done)} />
                 ))
                 :
                 <div>No Rooms !</div>

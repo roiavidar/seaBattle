@@ -1,7 +1,7 @@
 import { observable } from "mobx";
 import { computedFn } from "mobx-utils";
 import _ from "lodash";
-import { SubmarineModel } from "../components/SeaBattle/Game/SubmarinesGameTools";
+import { SubmarineModel } from "../components/SeaBattle/Game/submarine.model";
 
 export type Point = [number, number];
 

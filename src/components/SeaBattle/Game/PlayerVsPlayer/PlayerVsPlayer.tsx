@@ -2,9 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { IGameConfig } from '../../GameSetup/GameSetup.model';
 import SeaBattleBoard from '../SeaBattleBoard/SeaBattleBoard';
 import { useSeaBattleBoardLogic, ISeaBattleBoardLogic } from '../../../../hooks/useSeaBattleBoardLogic';
-import { getSubmarines, SubmarineModel } from '../SubmarinesGameTools';
+import { getSubmarines } from '../SubmarinesGameTools';
 import { ItemsType } from '../SeaBattleBoard/BoardItemsType';
 import { firebase } from '../../../../libraries/firebase';
+import { SubmarineModel } from '../submarine.model';
 export default function PlayerVsPlayer(props: {
     gameSetup: IGameConfig
 }) {
