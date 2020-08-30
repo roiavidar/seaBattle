@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { useRoomNameExist } from '../../../../hooks/useRoomNameExist';
+import { useIsValidRoomName } from '../../../../hooks/useIsValidRoomName';
 import { IGameConfig } from '../GameSetup.model';
-import { firebase } from '../../../../libraries/firebase';
+import { createGame } from './createGame';
 
 const labelStyle = {
     display: 'block'
@@ -13,35 +13,8 @@ export default function NewGameSetup(props: {
     const {done} = props;
     const [vsPlayer, setVsPLayer] = useState<boolean>(false);
     const [roomName, setRoomName] = useState<string>('');
-    const [roomNameExist, loading] = useRoomNameExist(roomName);
-    let roomNameValid = false;
-
-    if (roomNameExist !== null && roomName !== '') {
-        roomNameValid = !roomNameExist;
-    }
-
-    async function createGame() {
-        let docRef = null;
-        if (vsPlayer) {
-            const db = firebase.firestore();
-            docRef = await db.collection('rooms').add({
-                active: "true",
-                connectedPlayers: 1,
-                numberOfPlayers: 2,
-                name: roomName
-            });
-        }
-
-        const gameConfig: IGameConfig = {
-            id: (docRef && docRef.id) || 'private game',
-            vsPlayer,
-            roomName,
-            isPlayingFirst: true
-        }
-        
-        done(gameConfig);
-    }
-
+    const [roomNameValid, loading] = useIsValidRoomName(roomName);
+    
     return (
         <div>
             <div>
@@ -60,7 +33,7 @@ export default function NewGameSetup(props: {
                     }
                 </label>
             </div>
-            <button onClick={() => createGame()} disabled={loading || (!roomNameValid && vsPlayer)}>Create Game</button>
+            <button onClick={() => createGame(vsPlayer, roomName, done)} disabled={loading || (!roomNameValid && vsPlayer)}>Create Game</button>
         </div>
     )
 }
