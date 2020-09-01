@@ -83,7 +83,7 @@ export class Board {
         return square.item.repr();
     }
 
-    isSubmarineStarts(row: number, col: number) {
+    getSubmarine(row: number, col: number) {
         return this.submarines.get(`${row}-${col}`);
     }
 

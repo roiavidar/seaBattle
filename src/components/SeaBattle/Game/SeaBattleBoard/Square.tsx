@@ -27,17 +27,18 @@ function getMarkStyle(item: BoardSquare) {
     return elemStyle;
 }
 
-export const Square = observer(function Square({ item, children, play }: { 
+
+function SquareComponent({ item, children, play }: { 
     item?: BoardSquare,
     children: JSX.Element,
-    play?: () => void
+    play: () => void
  }) {
     if (!item) {
         throw new Error("Item cannot be null");
     }
 
     function handleClick() {
-        play && play()
+        play()
     }
 
     return (
@@ -46,4 +47,10 @@ export const Square = observer(function Square({ item, children, play }: {
             {children}
         </td>
     );
-});
+}
+
+SquareComponent.defaultProps = {
+    play: () => {}
+}
+
+export const Square = observer(SquareComponent);

@@ -56,7 +56,7 @@ export default function SeaBattlePlayerBoard(props: {
         }
         
         submarinesToPlaceOnBoard[index].vertical = !submarinesToPlaceOnBoard[index].vertical;
-        setSubmarines && setSubmarines([...submarines]) ;
+        setSubmarines([...submarines]) ;
     }
 
     function onSubmarineSelected(index: number) {
@@ -67,7 +67,7 @@ export default function SeaBattlePlayerBoard(props: {
     function onSubmarineDropped() {
         setRotateDisable(true);
         setSelectedSubmarine(null);
-        setSubmarines && setSubmarines([...submarines]);
+        setSubmarines([...submarines]);
         if (isAllSubmarinePlaced()) {
             setHideRotate(true);
         }
@@ -116,4 +116,8 @@ export default function SeaBattlePlayerBoard(props: {
             </DndProvider>
         </div>
     )
+}
+
+SeaBattlePlayerBoard.defaultProps = {
+    setSubmarines: () => {}
 }

@@ -40,9 +40,9 @@ export function BoardSquare(props: {
         colIndex: number,
         board: Board,
         itemsType: string,
-        submarineDropped?: () => void,
+        submarineDropped: () => void,
         addSubmarine: ((submarine: Submarine, row: number, column: number) => boolean) | undefined,
-        play?: (x: number, y: number) => void,
+        play: (x: number, y: number) => void,
         showSubmarines: boolean
     }){
         const {rowIndex, colIndex, board, itemsType = '', submarineDropped, play, addSubmarine, showSubmarines} = props;
@@ -54,7 +54,7 @@ export function BoardSquare(props: {
                 if (dropResult) {
                     submarine.dropped = true;
                 }
-                submarineDropped && submarineDropped();
+                submarineDropped();
                 return {
                     dropResult
                 }
@@ -64,16 +64,12 @@ export function BoardSquare(props: {
               item: monitor.getItem()
             }),
           });
-    
-          function getSubmarine(rowIndex: number, colIndex: number) {
-            return board.isSubmarineStarts(rowIndex, colIndex);
-          }
 
           function handlePlay(rowIndex: number, colIndex: number) {
-            play && play(rowIndex, colIndex);
+            play(rowIndex, colIndex);
           }
 
-          const submarine = getSubmarine(rowIndex, colIndex);
+          const submarine = board.getSubmarine(rowIndex, colIndex);
          
           return (
                 <Square key={colIndex} item={board.cellAt([rowIndex, colIndex])} play={() => handlePlay(rowIndex, colIndex)}>
@@ -99,4 +95,9 @@ export function BoardSquare(props: {
                     </div>
                 </Square>
           )
+    }
+
+    BoardSquare.defaultProps = {
+        play: (x: number, y: number) => {},
+        submarineDropped: () => {}
     }

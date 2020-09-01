@@ -26,7 +26,7 @@ export default function SeaBattleBoard(props: {
                         {_.range(board.columnCount).map((colIndex, index: number) => {
                             return <BoardSquare
                                         key={index}
-                                        itemsType={itemsType}
+                                         itemsType={itemsType}
                                         board={board}
                                         rowIndex={rowIndex}
                                         colIndex={colIndex}
