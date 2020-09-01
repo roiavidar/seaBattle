@@ -13,7 +13,7 @@ export default function SeaBattleBoard(props: {
     placeSubmarine: (submarine: Submarine, row: number, column: number) => boolean,
     submarines: SubmarineModel[],
     setSubmarines: (submarines: SubmarineModel[]) => void,
-    onSubmarineDropped?: () => void
+    onSubmarineDropped: () => void
 }) {
     const {board, itemsType, play, placeSubmarine, onSubmarineDropped, submarines} = props;
 
@@ -41,4 +41,8 @@ export default function SeaBattleBoard(props: {
             </table>
         </DndProvider>
     )
+}
+
+SeaBattleBoard.defaultProps = {
+    onSubmarineDropped: () => {}
 }

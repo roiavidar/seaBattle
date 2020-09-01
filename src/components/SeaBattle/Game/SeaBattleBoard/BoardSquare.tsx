@@ -41,7 +41,7 @@ export function BoardSquare(props: {
         board: Board,
         itemsType: string,
         submarineDropped: () => void,
-        addSubmarine: ((submarine: Submarine, row: number, column: number) => boolean) | undefined,
+        addSubmarine: (submarine: Submarine, row: number, column: number) => boolean,
         play: (x: number, y: number) => void,
         showSubmarines: boolean
     }){
@@ -65,14 +65,10 @@ export function BoardSquare(props: {
             }),
           });
 
-          function handlePlay(rowIndex: number, colIndex: number) {
-            play(rowIndex, colIndex);
-          }
-
           const submarine = board.getSubmarine(rowIndex, colIndex);
          
           return (
-                <Square key={colIndex} item={board.cellAt([rowIndex, colIndex])} play={() => handlePlay(rowIndex, colIndex)}>
+                <Square key={colIndex} item={board.cellAt([rowIndex, colIndex])} play={() => play(rowIndex, colIndex)}>
                     <div ref={drop} style={squareStyle}>
                     {submarine && showSubmarines && !submarine.partial &&
                             <BoardSubmarine 
